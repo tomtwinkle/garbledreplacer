@@ -32,9 +32,15 @@ func TestNewTransformer(t *testing.T) {
 		},
 		"UTF-8->ShiftJIS:with garbled text:other replaceRune": {
 			encoding: japanese.ShiftJIS,
-			in:       strings.Repeat("一二三四🍣五六七八九🍺十拾壱", 1000),
+			in:       strings.Repeat("一二三四🍣五六七八九🍺十拾壱", 3000),
 			replace:  '@',
-			want:     strings.Repeat("一二三四@五六七八九@十拾壱", 1000),
+			want:     strings.Repeat("一二三四@五六七八九@十拾壱", 3000),
+		},
+		"UTF-8->EUCJP:with garbled text": {
+			encoding: japanese.EUCJP,
+			in:       strings.Repeat("一二三四🍣五六七八九🍺十拾壱", 3000),
+			replace:  '?',
+			want:     strings.Repeat("一二三四?五六七八九?十拾壱", 3000),
 		},
 	}
 
@@ -62,10 +68,10 @@ func TestNewTransformer(t *testing.T) {
 			}
 
 			if len([]rune(tt.want)) != len([]rune(actual.String())) {
-				t.Error("string length does not match")
+				t.Errorf("string length does not match %d=%d", len([]rune(tt.want)), len([]rune(actual.String())))
 			}
 			if tt.want != actual.String() {
-				t.Error("string does not match")
+				t.Errorf("string does not match\n%s", actual.String())
 			}
 		})
 	}

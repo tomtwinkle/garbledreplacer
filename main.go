@@ -9,26 +9,23 @@ import (
 )
 
 func NewTransformer(enc encoding.Encoding, replaceRune rune) transform.Transformer {
-	return transform.Chain(&wrap{
+	e := enc.NewEncoder()
+	return transform.Chain(&replacer{
 		replaceRune: replaceRune,
-		enc:         enc.NewEncoder(),
-	},
-		enc.NewEncoder(),
-	)
+		enc:         e,
+	}, e)
 }
 
-type wrap struct {
+type replacer struct {
 	transform.NopResetter
 
 	enc         *encoding.Encoder
 	replaceRune rune
-
-	offsetDsc int
 }
 
-var _ transform.Transformer = (*wrap)(nil)
+var _ transform.Transformer = (*replacer)(nil)
 
-func (t *wrap) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
+func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
 	_src := src
 
 	if len(_src) == 0 && atEOF {
