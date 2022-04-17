@@ -2,6 +2,7 @@ package garbledreplacer_test
 
 import (
 	"bytes"
+	"golang.org/x/text/encoding/traditionalchinese"
 	"strings"
 	"testing"
 
@@ -41,6 +42,12 @@ func TestNewTransformer(t *testing.T) {
 			in:       strings.Repeat("一二三四🍣五六七八九🍺十拾壱", 3000),
 			replace:  '?',
 			want:     strings.Repeat("一二三四?五六七八九?十拾壱", 3000),
+		},
+		"UTF-8->Big5:with garbled text": {
+			encoding: traditionalchinese.Big5,
+			in:       strings.Repeat("咖呸咕咀呻🍣呷咄咒咆呼咐🍺呱呶和咚呢", 3000),
+			replace:  '?',
+			want:     strings.Repeat("咖呸咕咀呻?呷咄咒咆呼咐?呱呶和咚呢", 3000),
 		},
 	}
 

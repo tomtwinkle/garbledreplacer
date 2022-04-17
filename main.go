@@ -32,9 +32,11 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 		return
 	}
 
-	idx := len(dst)
-	if len(_src) < idx {
+	var idx int
+	if len(_src) < len(dst) {
 		idx = len(_src)
+	} else {
+		idx = len(dst)
 	}
 	for _, r := range bytes.Runes(_src[:idx]) {
 		if r == utf8.RuneError {
@@ -45,8 +47,7 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 		if _, err := t.enc.Bytes(buf); err != nil {
 			buf = []byte(string(t.replaceRune))
 		}
-		nd := copy(dst[nDst:], buf)
-		nDst += nd
+		nDst += copy(dst[nDst:], buf)
 	}
 
 	if nDst < idx {
