@@ -26,11 +26,12 @@ const msg = "一二三四🍣五六七八九🍺十拾壱"
 var buf bytes.Buffer
 w := transform.NewWriter(&buf, garbledreplacer.NewTransformer(japanese.ShiftJIS, '?'))
 if _, err := w.Write([]byte([]byte(msg))); err != nil {
-	panic(err)
+    panic(err)
 }
 if err := w.Close(); err != nil {
-	panic(err)
+    panic(err)
 }
+
 fmt.Println(buf.String())
 // 一二三四?五六七八九?十拾壱
 ```
