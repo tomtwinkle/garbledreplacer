@@ -2,14 +2,13 @@ package garbledreplacer_test
 
 import (
 	"bytes"
-	"golang.org/x/text/encoding/traditionalchinese"
-	"strings"
-	"testing"
-
 	"github.com/tomtwinkle/garbledreplacer"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/encoding/traditionalchinese"
 	"golang.org/x/text/transform"
+	"strings"
+	"testing"
 )
 
 func TestNewTransformer(t *testing.T) {
@@ -82,4 +81,29 @@ func TestNewTransformer(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzTransformer(f *testing.F) {
+	seeds := [][]byte{
+		bytes.Repeat([]byte("一二三四五六七八九十拾壱"), 1000),
+		bytes.Repeat([]byte("一二三四五六七八九十拾壱🍺"), 1000),
+		bytes.Repeat([]byte("一二三四🍣五六七八九🍺十拾壱"), 3000),
+		bytes.Repeat([]byte("一二三四🍣五六七八九🍺十拾壱"), 3000),
+		bytes.Repeat([]byte("咖呸咕咀呻🍣呷咄咒咆呼咐🍺呱呶和咚呢"), 3000),
+	}
+
+	for _, b := range seeds {
+		f.Add(b)
+	}
+
+	f.Fuzz(func(t *testing.T, p []byte) {
+		tr := garbledreplacer.NewTransformer(japanese.ShiftJIS, '?')
+		for len(p) > 0 {
+			_, n, err := transform.Bytes(tr, p)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+			p = p[n:]
+		}
+	})
 }
