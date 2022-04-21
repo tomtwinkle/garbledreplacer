@@ -31,6 +31,13 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 	if len(_src) == 0 && atEOF {
 		return
 	}
+	if !utf8.Valid(src) {
+		// If not a string, do not process
+		n := copy(dst, src)
+		nDst = n
+		nSrc = n
+		return
+	}
 
 	var idx int
 	if len(_src) < len(dst) {
