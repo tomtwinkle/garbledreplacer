@@ -104,7 +104,7 @@ func TestNewTransformer(t *testing.T) {
 func FuzzTransformer(f *testing.F) {
 	f.Skip()
 	seeds := [][]byte{
-		bytes.Repeat([]byte("一二三四五六七八九十拾壱🍺"), 1000),
+		bytes.Repeat([]byte("一二三四五六七八九十拾壱🍣🍺"), 1000),
 		bytes.Repeat([]byte("一二三四🍣五六七八九🍺十拾壱"), 3000),
 		bytes.Repeat([]byte("一二三四🍣五六七八九🍺十拾壱"), 3000),
 		bytes.Repeat([]byte("咖呸咕咀呻🍣呷咄咒咆呼咐🍺呱呶和咚呢"), 3000),
