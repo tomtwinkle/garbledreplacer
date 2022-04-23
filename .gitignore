@@ -17,3 +17,6 @@
 # Editor
 .idea
 .code
+
+# Fuzz TestDate
+testdata/fuzz
