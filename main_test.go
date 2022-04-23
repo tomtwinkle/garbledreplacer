@@ -2,6 +2,7 @@ package garbledreplacer_test
 
 import (
 	"bytes"
+	"errors"
 	"github.com/tomtwinkle/garbledreplacer"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/japanese"
@@ -14,10 +15,11 @@ import (
 
 func TestNewTransformer(t *testing.T) {
 	tests := map[string]struct {
-		encoding encoding.Encoding
-		in       string
-		replace  rune
-		want     string
+		encoding  encoding.Encoding
+		in        string
+		replace   rune
+		want      string
+		wantError error
 	}{
 		"UTF-8->ShiftJIS:no garbled text": {
 			encoding: japanese.ShiftJIS,
@@ -43,6 +45,12 @@ func TestNewTransformer(t *testing.T) {
 			replace:  '?',
 			want:     "?",
 		},
+		"UTF-8->ShiftJIS:Invalid UTF-8 character": {
+			encoding:  japanese.ShiftJIS,
+			in:        "\xe4",
+			replace:   '?',
+			wantError: garbledreplacer.ErrInvalidUTF8,
+		},
 		"UTF-8->EUCJP:with garbled text": {
 			encoding: japanese.EUCJP,
 			in:       strings.Repeat("一二三四🍣五六七八九🍺十拾壱", 3000),
@@ -65,6 +73,9 @@ func TestNewTransformer(t *testing.T) {
 			var buf bytes.Buffer
 			w := transform.NewWriter(&buf, garbledreplacer.NewTransformer(tt.encoding, tt.replace))
 			if _, err := w.Write([]byte(tt.in)); err != nil {
+				if tt.wantError != nil && errors.Is(err, tt.wantError) {
+					return
+				}
 				t.Error(err)
 			}
 			if err := w.Close(); err != nil {
@@ -106,6 +117,9 @@ func FuzzTransformer(f *testing.F) {
 	f.Fuzz(func(t *testing.T, p []byte) {
 		tr := garbledreplacer.NewTransformer(japanese.ShiftJIS, '?')
 		for len(p) > 0 {
+			if !utf8.Valid(p) {
+				t.Skip()
+			}
 			_, n, err := transform.Bytes(tr, p)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
