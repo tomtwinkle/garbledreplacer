@@ -41,7 +41,7 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 	for len(_src) > 0 {
 		_, n := utf8.DecodeRune(_src)
 		buf := _src[:n]
-		if _, err := t.enc.Bytes(buf); err != nil {
+		if _, encErr := t.enc.Bytes(buf); encErr != nil {
 			// Replace strings that cannot be converted
 			buf = []byte(string(t.replaceRune))
 		}

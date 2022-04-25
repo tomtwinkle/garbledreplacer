@@ -101,6 +101,7 @@ func TestNewTransformer(t *testing.T) {
 	}
 }
 
+// nolint: typecheck
 func FuzzTransformer(f *testing.F) {
 	f.Skip()
 	seeds := [][]byte{
