@@ -2,29 +2,31 @@ name: Test
 
 on:
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
   test:
     strategy:
       matrix:
-        go-version: [ 1.18.x ]
+        go-version: [ 1.18.x, 1.19.x ]
         os: [ ubuntu-latest ]
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Go Module Download
-        run: go mod download
+      - name: Get dependencies
+        run: |
+          go install gotest.tools/gotestsum@latest
+          go get -v -t -d ./...
 
       - name: Test
         timeout-minutes: 3
-        run: go test -v ./... -race -coverprofile="coverage.txt" -covermode=atomic -coverpkg=./...
+        run: gotestsum --junitfile unit-tests.xml -- -v -race ./...
