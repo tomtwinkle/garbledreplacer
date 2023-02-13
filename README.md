@@ -2,7 +2,8 @@
 
 ![GitHub](https://img.shields.io/github/license/tomtwinkle/garbledreplacer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/olvrng/ujson?style=flat-square)](https://goreportcard.com/report/github.com/tomtwinkle/garbledreplacer)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/tomtwinkle/garbledreplacer/Build%20Check)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tomtwinkle/garbledreplacer/build.yaml)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tomtwinkle/garbledreplacer/test.yaml?label=test)
 
 ## Overview
 `transform.Transformer` to replace characters that cannot be converted from `UTF-8` to another character encoding.
