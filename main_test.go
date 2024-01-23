@@ -14,6 +14,7 @@ import (
 	"unicode/utf8"
 )
 
+//nolint:jscpd
 func TestNewTransformer(t *testing.T) {
 	tests := map[string]struct {
 		encoding  encoding.Encoding
