@@ -32,15 +32,25 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 	if len(_src) == 0 && atEOF {
 		return
 	}
-	if !utf8.Valid(_src) {
-		// If not a string, do not process
-		err = ErrInvalidUTF8
-		return
-	}
 
 	for len(_src) > 0 {
-		_, n := utf8.DecodeRune(_src)
-		buf := _src[:n]
+		r, size := utf8.DecodeRune(_src)
+		if r < utf8.RuneSelf {
+			size = 1
+		} else if size == 1 {
+			// All valid runes of size 1 (those below utf8.RuneSelf) were
+			// handled above. We have invalid UTF-8, or we haven't seen the
+			// full character yet.
+			if !atEOF && !utf8.FullRune(_src) {
+				err = transform.ErrShortSrc
+				break
+			}
+			//　If the last string cannot be converted to rune, it is not replaced.
+			if atEOF && !utf8.FullRune(_src) {
+				break
+			}
+		}
+		buf := _src[:size]
 		if _, encErr := t.enc.Bytes(buf); encErr != nil {
 			// Replace strings that cannot be converted
 			buf = []byte(string(t.replaceRune))
@@ -54,9 +64,9 @@ func (t *replacer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err e
 		if dstN <= 0 {
 			break
 		}
-		nSrc += n
+		nSrc += size
 		nDst += dstN
-		_src = _src[n:]
+		_src = _src[size:]
 	}
 	return
 }
