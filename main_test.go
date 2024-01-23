@@ -4,17 +4,17 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"strings"
+	"testing"
+	"unicode/utf8"
+
 	"github.com/tomtwinkle/garbledreplacer"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/encoding/traditionalchinese"
 	"golang.org/x/text/transform"
-	"strings"
-	"testing"
-	"unicode/utf8"
 )
 
-//nolint:jscpd
 func TestNewTransformer(t *testing.T) {
 	tests := map[string]struct {
 		encoding  encoding.Encoding

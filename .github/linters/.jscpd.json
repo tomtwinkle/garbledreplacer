@@ -1,0 +1,5 @@
+{
+  "threshold": 0,
+  "ignore": ["**/*_test.go"],
+  "absolute": true
+}
