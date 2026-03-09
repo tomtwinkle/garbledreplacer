@@ -1,3 +1,4 @@
+---
 #################################
 #################################
 ## Super Linter GitHub Actions ##
@@ -43,7 +44,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
+          # Full git history is needed for the changed-files list in super-linter.
           fetch-depth: 0
 
       ################################
