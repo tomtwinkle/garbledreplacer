@@ -12,7 +12,7 @@
 
 ## Motivation
 
-Golang標準の `japanese.ShiftJIS` 等のEncoderでは変換出来ない文字が合った場合
+Go標準の `japanese.ShiftJIS` 等のEncoderでは変換出来ない文字が合った場合
 `rune not supported by encoding` errorが出てしまい変換ができない。
 
 そのため、Encoderを通す前に変換できない文字を事前に別の文字に置き換える為のTransformerを作成した。
